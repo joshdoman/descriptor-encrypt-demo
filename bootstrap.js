@@ -1,2 +1,2 @@
 // bootstrap.js
-import("./pkg/descriptor-encrypt-app.js").catch(console.error);
+import("./pkg/descriptor-encrypt-demo.js").catch(console.error);
