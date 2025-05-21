@@ -12,6 +12,7 @@
     .tabcontent { display: none; padding: 20px; border: 1px solid #ccc; border-top: none; }
     .visible { display: block; }
     .result-container { margin-bottom: 20px; }
+    .footer { margin-top: 30px; text-align: center; }
   </style>
 <script defer src="bundle.js"></script></head>
 <body>
@@ -57,6 +58,10 @@
     </div>
   </div>
   
+  <div class="footer">
+    <a href="https://github.com/joshdoman/descriptor-encrypt-demo" target="_blank">Source code</a>
+  </div>
+
   <script>
     function copyToClipboard(elementId) {
       const text = document.getElementById(elementId).textContent;
@@ -91,7 +96,7 @@
     async function encryptDescriptor() {
       const input = document.getElementById("descriptorInput").value;
       try {
-        const result = await window.wasm.encrypt_descriptor(input);
+        const result = await window.wasm.encrypt_descriptor(input.trim());
         document.getElementById("encryptResult").textContent = result;
       } catch (e) {
         document.getElementById("encryptResult").textContent = "Error: " + e.toString();
@@ -101,7 +106,7 @@
     async function showTemplate() {
       const input = document.getElementById("encryptedInput").value;
       try {
-        const result = await window.wasm.get_descriptor_template(input);
+        const result = await window.wasm.get_descriptor_template(input.trim());
         document.getElementById("templateResult").textContent = result;
       } catch (e) {
         document.getElementById("templateResult").textContent = "Error: " + e.toString();
@@ -112,7 +117,7 @@
       const encryptedInput = document.getElementById("encryptedInput").value;
       const keysInput = document.getElementById("keysInput").value;
       try {
-        const result = await window.wasm.decrypt_descriptor(encryptedInput, keysInput);
+        const result = await window.wasm.decrypt_descriptor(encryptedInput.trim(), keysInput.trim());
         document.getElementById("decryptResult").textContent = result;
       } catch (e) {
         document.getElementById("decryptResult").textContent = "Error: " + e.toString();
