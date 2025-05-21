@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Descriptor Encrypt Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    textarea { width: 100%; height: 100px; margin-bottom: 10px; }
+    .result { background: #f0f0f0; padding: 10px; border-radius: 4px; word-break: break-all; margin-bottom: 10px; }
+    .tab { overflow: hidden; border: 1px solid #ccc; background-color: #f1f1f1; }
+    .tab button { background-color: inherit; float: left; border: none; cursor: pointer; padding: 14px 16px; }
+    .tab button.active { background-color: #ccc; }
+    .tabcontent { display: none; padding: 20px; border: 1px solid #ccc; border-top: none; }
+    .visible { display: block; }
+    .result-container { margin-bottom: 20px; }
+  </style>
+<script defer src="bundle.js"></script></head>
+<body>
+  <h1>Descriptor Encrypt Demo</h1>
+  
+  <div class="tab">
+    <button class="tablink active" onclick="openTab('encrypt')">Encrypt</button>
+    <button class="tablink" onclick="openTab('decrypt')">Decrypt</button>
+  </div>
+  
+  <div id="encrypt" class="tabcontent visible">
+    <h2>Encrypt a Descriptor</h2>
+    <label>Input Descriptor:</label>
+    <textarea id="descriptorInput" placeholder="Enter your Bitcoin descriptor here..."></textarea>
+    <button onclick="encryptDescriptor()">Encrypt</button>
+    <h3>Encrypted Result:</h3>
+    <div class="result-container">
+      <div id="encryptResult" class="result"></div>
+      <button onclick="copyToClipboard('encryptResult')">Copy to Clipboard</button>
+    </div>
+  </div>
+  
+  <div id="decrypt" class="tabcontent">
+    <h2>Decrypt a Descriptor</h2>
+    <label>Encrypted Descriptor (hex):</label>
+    <textarea id="encryptedInput" placeholder="Enter the encrypted hex data..."></textarea>
+    
+    <h3>Template:</h3>
+    <div class="result-container">
+      <div id="templateResult" class="result"></div>
+      <button onclick="showTemplate()">Show Template</button>
+      <button onclick="copyToClipboard('templateResult')">Copy to Clipboard</button>
+    </div>
+    
+    <h3>Keys for Decryption:</h3>
+    <textarea id="keysInput" placeholder="Enter keys separated by commas..."></textarea>
+    <button onclick="decryptDescriptor()">Decrypt</button>
+    
+    <h3>Decrypted Result:</h3>
+    <div class="result-container">
+      <div id="decryptResult" class="result"></div>
+      <button onclick="copyToClipboard('decryptResult')">Copy to Clipboard</button>
+    </div>
+  </div>
+  
+  <script>
+    function copyToClipboard(elementId) {
+      const text = document.getElementById(elementId).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        // Show temporary success message
+        const copyBtn = event.target;
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => {
+          copyBtn.textContent = originalText;
+        }, 2000);
+      }).catch(err => {
+        console.error('Could not copy text: ', err);
+      });
+    }
+
+    function openTab(tabName) {
+      const tabcontent = document.getElementsByClassName("tabcontent");
+      for (let i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].classList.remove("visible");
+      }
+      
+      const tablinks = document.getElementsByClassName("tablink");
+      for (let i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active");
+      }
+      
+      document.getElementById(tabName).classList.add("visible");
+      event.currentTarget.classList.add("active");
+    }
+    
+    async function encryptDescriptor() {
+      const input = document.getElementById("descriptorInput").value;
+      try {
+        const result = await window.wasm.encrypt_descriptor(input);
+        document.getElementById("encryptResult").textContent = result;
+      } catch (e) {
+        document.getElementById("encryptResult").textContent = "Error: " + e.toString();
+      }
+    }
+    
+    async function showTemplate() {
+      const input = document.getElementById("encryptedInput").value;
+      try {
+        const result = await window.wasm.get_descriptor_template(input);
+        document.getElementById("templateResult").textContent = result;
+      } catch (e) {
+        document.getElementById("templateResult").textContent = "Error: " + e.toString();
+      }
+    }
+    
+    async function decryptDescriptor() {
+      const encryptedInput = document.getElementById("encryptedInput").value;
+      const keysInput = document.getElementById("keysInput").value;
+      try {
+        const result = await window.wasm.decrypt_descriptor(encryptedInput, keysInput);
+        document.getElementById("decryptResult").textContent = result;
+      } catch (e) {
+        document.getElementById("decryptResult").textContent = "Error: " + e.toString();
+      }
+    }
+  </script>
+  
+  <script type="module">
+    import init, { encrypt_descriptor, decrypt_descriptor, get_descriptor_template } from './pkg/descriptor_encrypt_demo.js';
+    
+    async function run() {
+      await init();
+      window.wasm = {
+        encrypt_descriptor,
+        decrypt_descriptor,
+        get_descriptor_template
+      };
+    }
+    
+    run();
+  </script>
+</body>
+</html>
