@@ -1,0 +1,18 @@
+{
+  "name": "descriptor-encrypt-demo",
+  "type": "module",
+  "collaborators": [
+    "Joshua Doman <joshsdoman@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "descriptor_encrypt_demo_bg.wasm",
+    "descriptor_encrypt_demo.js",
+    "descriptor_encrypt_demo.d.ts"
+  ],
+  "main": "descriptor_encrypt_demo.js",
+  "types": "descriptor_encrypt_demo.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
