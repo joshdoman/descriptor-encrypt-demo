@@ -1,0 +1,32 @@
+{
+  "name": "descriptor-encrypt-demo",
+  "version": "1.0.0",
+  "description": "This is a demo web application for `descriptor-encrypt`, a rust library that encrypts any Bitcoin wallet descriptor such that it can only be recovered by a set of a keys that can spend the funds.",
+  "main": "bootstrap.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "start": "webpack serve --open",
+    "build:wasm": "CC=/opt/homebrew/opt/llvm/bin/clang AR=/opt/homebrew/opt/llvm/bin/llvm-ar wasm-pack build --target web"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshdoman/descriptor-encrypt-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joshdoman/descriptor-encrypt-demo/issues"
+  },
+  "homepage": "https://github.com/joshdoman/descriptor-encrypt-demo#readme",
+  "devDependencies": {
+    "copy-webpack-plugin": "^13.0.0",
+    "html-webpack-plugin": "^5.6.3",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.1"
+  }
+}

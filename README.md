@@ -6,24 +6,28 @@ Supports all descriptor types and miniscript.
 
 ## 🚴 Usage
 
-### Build with `wasm-pack build`
+### Install dependencies
 
 ```
-CC=/opt/homebrew/opt/llvm/bin/clang \
-AR=/opt/homebrew/opt/llvm/bin/llvm-ar \
-wasm-pack build --target web
+npm install
 ```
 
-### Install `http-server`
+### Build the WASM package
 
 ```
-npm install -g http-server
+npm run build:wasm
 ```
 
-### Run `http-server`
+### Start the development server
 
 ```
-http-server
+npm run start
+```
+
+### Build for production
+
+```
+npm run build
 ```
 
 ## License

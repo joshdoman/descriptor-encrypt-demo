@@ -6,7 +6,7 @@ Supports all descriptor types and miniscript.
 
 ## 🚴 Usage
 
-### 🛠️ Build with `wasm-pack build`
+### Build with `wasm-pack build`
 
 ```
 CC=/opt/homebrew/opt/llvm/bin/clang \
@@ -14,13 +14,13 @@ AR=/opt/homebrew/opt/llvm/bin/llvm-ar \
 wasm-pack build --target web
 ```
 
-### 🎁 Install `http-server`
+### Install `http-server`
 
 ```
 npm install -g http-server
 ```
 
-### 🎁 Run `http-server`
+### Run `http-server`
 
 ```
 http-server
