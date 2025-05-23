@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
-export function encrypt_descriptor(descriptor_string: string): string;
-export function encrypt_descriptor_with_full_secrecy(descriptor_string: string): string;
-export function decrypt_descriptor(hex_data: string, keys_string: string): string;
+export function encrypt_descriptor(descriptor: string): string;
+export function encrypt_descriptor_with_full_secrecy(descriptor: string): string;
+export function decrypt_descriptor(hex_data: string, keys: string[]): string;
 export function get_descriptor_template(hex_data: string): string;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
@@ -22,6 +22,7 @@ export interface InitOutput {
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __externref_table_dealloc: (a: number) => void;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
+  readonly __externref_table_alloc: () => number;
   readonly __wbindgen_start: () => void;
 }
 

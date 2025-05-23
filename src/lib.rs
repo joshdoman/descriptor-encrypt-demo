@@ -6,8 +6,8 @@ use miniscript::descriptor::{Descriptor, DescriptorPublicKey};
 use std::str::FromStr;
 
 #[wasm_bindgen]
-pub fn encrypt_descriptor(descriptor_string: &str) -> Result<String, JsValue> {
-    let desc = Descriptor::<DescriptorPublicKey>::from_str(descriptor_string)
+pub fn encrypt_descriptor(descriptor: String) -> Result<String, JsValue> {
+    let desc = Descriptor::<DescriptorPublicKey>::from_str(&descriptor)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     
     let encrypted = encrypt(desc)
@@ -17,8 +17,8 @@ pub fn encrypt_descriptor(descriptor_string: &str) -> Result<String, JsValue> {
 }
 
 #[wasm_bindgen]
-pub fn encrypt_descriptor_with_full_secrecy(descriptor_string: &str) -> Result<String, JsValue> {
-    let desc = Descriptor::<DescriptorPublicKey>::from_str(descriptor_string)
+pub fn encrypt_descriptor_with_full_secrecy(descriptor: String) -> Result<String, JsValue> {
+    let desc = Descriptor::<DescriptorPublicKey>::from_str(&descriptor)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     
     let encrypted = encrypt_with_full_secrecy(desc)
@@ -28,29 +28,28 @@ pub fn encrypt_descriptor_with_full_secrecy(descriptor_string: &str) -> Result<S
 }
 
 #[wasm_bindgen]
-pub fn decrypt_descriptor(hex_data: &str, keys_string: &str) -> Result<String, JsValue> {
-    let data = hex::decode(hex_data)
+pub fn decrypt_descriptor(hex_data: String, keys: Vec<String>) -> Result<String, JsValue> {
+    let data = hex::decode(&hex_data)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     
-    // Parse keys from string (comma-separated list of keys)
-    let mut keys = Vec::new();
-    for key_str in keys_string.split(',') {
-        if !key_str.trim().is_empty() {
-            let key = DescriptorPublicKey::from_str(key_str.trim())
+    let mut decoded_keys = Vec::new();
+    for key in keys {
+        if !key.trim().is_empty() {
+            let key = DescriptorPublicKey::from_str(key.trim())
                 .map_err(|e| JsValue::from_str(&e.to_string()))?;
-            keys.push(key);
+            decoded_keys.push(key);
         }
     }
     
-    let descriptor = decrypt(&data, keys)
+    let descriptor = decrypt(&data, decoded_keys)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     
     Ok(descriptor.to_string())
 }
 
 #[wasm_bindgen]
-pub fn get_descriptor_template(hex_data: &str) -> Result<String, JsValue> {
-    let data = hex::decode(hex_data)
+pub fn get_descriptor_template(hex_data: String) -> Result<String, JsValue> {
+    let data = hex::decode(&hex_data)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     
     let template = get_template(&data)
