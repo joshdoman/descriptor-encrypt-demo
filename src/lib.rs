@@ -57,3 +57,17 @@ pub fn get_descriptor_template(hex_data: String) -> Result<String, JsValue> {
     
     Ok(template.to_string())
 }
+
+#[wasm_bindgen]
+pub fn get_origin_derivation_paths(hex_data: String) -> Result<Vec<String>, JsValue> {
+    let data = hex::decode(&hex_data)
+        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    
+    let paths = descriptor_encrypt::get_origin_derivation_paths(&data)
+        .map_err(|e| JsValue::from_str(&e.to_string()))?
+        .into_iter()
+        .map(|path| path.to_string())
+        .collect();
+    
+    Ok(paths)
+}

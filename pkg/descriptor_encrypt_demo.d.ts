@@ -4,6 +4,7 @@ export function encrypt_descriptor(descriptor: string): string;
 export function encrypt_descriptor_with_full_secrecy(descriptor: string): string;
 export function decrypt_descriptor(hex_data: string, keys: string[]): string;
 export function get_descriptor_template(hex_data: string): string;
+export function get_origin_derivation_paths(hex_data: string): string[];
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -13,6 +14,7 @@ export interface InitOutput {
   readonly encrypt_descriptor_with_full_secrecy: (a: number, b: number) => [number, number, number, number];
   readonly decrypt_descriptor: (a: number, b: number, c: number, d: number) => [number, number, number, number];
   readonly get_descriptor_template: (a: number, b: number) => [number, number, number, number];
+  readonly get_origin_derivation_paths: (a: number, b: number) => [number, number, number, number];
   readonly rustsecp256k1_v0_10_0_context_create: (a: number) => number;
   readonly rustsecp256k1_v0_10_0_context_destroy: (a: number) => void;
   readonly rustsecp256k1_v0_10_0_default_illegal_callback_fn: (a: number, b: number) => void;
@@ -23,6 +25,7 @@ export interface InitOutput {
   readonly __externref_table_dealloc: (a: number) => void;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
   readonly __externref_table_alloc: () => number;
+  readonly __externref_drop_slice: (a: number, b: number) => void;
   readonly __wbindgen_start: () => void;
 }
 

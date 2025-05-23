@@ -5,7 +5,8 @@ import("./pkg/descriptor_encrypt_demo.js")
       encrypt_descriptor: module.encrypt_descriptor,
       encrypt_descriptor_with_full_secrecy: module.encrypt_descriptor_with_full_secrecy,
       decrypt_descriptor: module.decrypt_descriptor,
-      get_descriptor_template: module.get_descriptor_template
+      get_descriptor_template: module.get_descriptor_template,
+      get_origin_derivation_paths: module.get_origin_derivation_paths
     };
     
     // Initialize the WASM module

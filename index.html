@@ -123,6 +123,7 @@
     <button class="tablink active" onclick="openTab('encrypt')">Encrypt</button>
     <button class="tablink" onclick="openTab('decrypt')">Decrypt</button>
     <button class="tablink" onclick="openTab('template')">Get Template</button>
+    <button class="tablink" onclick="openTab('derivation')">Get Derivation Paths</button>
   </div>
   
   <div id="encrypt" class="tabcontent visible">
@@ -184,6 +185,20 @@
     <div class="result-container">
       <div id="templateResult" class="result"></div>
       <button onclick="copyToClipboard('templateResult')">Copy to Clipboard</button>
+    </div>
+  </div>
+  
+  <div id="derivation" class="tabcontent">
+    <h2>Get Derivation Paths</h2>
+    <label>Encrypted Descriptor (hex):</label>
+    <textarea id="encryptedInputDerivation" placeholder="Enter the encrypted hex data..."></textarea>
+    
+    <button onclick="getDerivationPaths()">Get Derivation Paths</button>
+    
+    <h3>Unique Derivation Paths:</h3>
+    <div class="result-container">
+      <div id="derivationResult" class="result"></div>
+      <button onclick="copyToClipboard('derivationResult')">Copy to Clipboard</button>
     </div>
   </div>
   
@@ -261,7 +276,6 @@
       
       try {
         let result;
-        console.log(window.wasm);
         if (useFullSecrecy) {
           result = await window.wasm.encrypt_descriptor_with_full_secrecy(input.trim());
         } else {
@@ -293,6 +307,17 @@
         document.getElementById("decryptResult").textContent = "Error: " + e.toString();
       }
     }
+    
+    async function getDerivationPaths() {
+      const encryptedInput = document.getElementById("encryptedInputDerivation").value;
+      try {
+        const paths = await window.wasm.get_origin_derivation_paths(encryptedInput.trim());
+        const uniquePaths = [...new Set(paths)];
+        document.getElementById("derivationResult").textContent = uniquePaths.join('\n');
+      } catch (e) {
+        document.getElementById("derivationResult").textContent = "Error: " + e.toString();
+      }
+    }
   </script>
   
   <script type="module">
@@ -300,18 +325,18 @@
       encrypt_descriptor,
       encrypt_descriptor_with_full_secrecy,
       decrypt_descriptor,
-      get_descriptor_template
+      get_descriptor_template,
+      get_origin_derivation_paths
     } from './pkg/descriptor_encrypt_demo.js';
     
     async function run() {
       await init();
-      console.log(encrypt_descriptor);
-      console.log(encrypt_descriptor_with_full_secrecy);
       window.wasm = {
         encrypt_descriptor,
         encrypt_descriptor_with_full_secrecy,
         decrypt_descriptor,
-        get_descriptor_template
+        get_descriptor_template,
+        get_origin_derivation_paths
       };
     }
     
