@@ -94,6 +94,7 @@
   <div class="tab">
     <button class="tablink active" onclick="openTab('encrypt')">Encrypt</button>
     <button class="tablink" onclick="openTab('decrypt')">Decrypt</button>
+    <button class="tablink" onclick="openTab('template')">Get Template</button>
   </div>
   
   <div id="encrypt" class="tabcontent visible">
@@ -125,14 +126,7 @@
   <div id="decrypt" class="tabcontent">
     <h2>Decrypt a Descriptor</h2>
     <label>Encrypted Descriptor (hex):</label>
-    <textarea id="encryptedInput" placeholder="Enter the encrypted hex data..."></textarea>
-    
-    <h3>Template:</h3>
-    <div class="result-container">
-      <div id="templateResult" class="result"></div>
-      <button onclick="showTemplate()">Show Template</button>
-      <button onclick="copyToClipboard('templateResult')">Copy to Clipboard</button>
-    </div>
+    <textarea id="encryptedInputDecrypt" placeholder="Enter the encrypted hex data..."></textarea>
     
     <h3>Keys for Decryption:</h3>
     <textarea id="keysInput" placeholder="Enter keys separated by commas..."></textarea>
@@ -142,6 +136,20 @@
     <div class="result-container">
       <div id="decryptResult" class="result"></div>
       <button onclick="copyToClipboard('decryptResult')">Copy to Clipboard</button>
+    </div>
+  </div>
+  
+  <div id="template" class="tabcontent">
+    <h2>Get Descriptor Template</h2>
+    <label>Encrypted Descriptor (hex):</label>
+    <textarea id="encryptedInputTemplate" placeholder="Enter the encrypted hex data..."></textarea>
+    
+    <button onclick="showTemplate()">Show Template</button>
+    
+    <h3>Template Result:</h3>
+    <div class="result-container">
+      <div id="templateResult" class="result"></div>
+      <button onclick="copyToClipboard('templateResult')">Copy to Clipboard</button>
     </div>
   </div>
   
@@ -199,7 +207,7 @@
     }
     
     async function showTemplate() {
-      const input = document.getElementById("encryptedInput").value;
+      const input = document.getElementById("encryptedInputTemplate").value;
       try {
         const result = await window.wasm.get_descriptor_template(input.trim());
         document.getElementById("templateResult").textContent = result;
@@ -209,7 +217,7 @@
     }
     
     async function decryptDescriptor() {
-      const encryptedInput = document.getElementById("encryptedInput").value;
+      const encryptedInput = document.getElementById("encryptedInputDecrypt").value;
       const keysInput = document.getElementById("keysInput").value;
       try {
         const result = await window.wasm.decrypt_descriptor(encryptedInput.trim(), keysInput.trim());
