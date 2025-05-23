@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export function encrypt_descriptor(descriptor_string: string): string;
+export function encrypt_descriptor_with_full_secrecy(descriptor_string: string): string;
 export function decrypt_descriptor(hex_data: string, keys_string: string): string;
 export function get_descriptor_template(hex_data: string): string;
 
@@ -9,6 +10,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly encrypt_descriptor: (a: number, b: number) => [number, number, number, number];
+  readonly encrypt_descriptor_with_full_secrecy: (a: number, b: number) => [number, number, number, number];
   readonly decrypt_descriptor: (a: number, b: number, c: number, d: number) => [number, number, number, number];
   readonly get_descriptor_template: (a: number, b: number) => [number, number, number, number];
   readonly rustsecp256k1_v0_10_0_context_create: (a: number) => number;

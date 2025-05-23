@@ -1,7 +1,7 @@
 mod utils;
 
 use wasm_bindgen::prelude::*;
-use descriptor_encrypt::{encrypt, decrypt, get_template};
+use descriptor_encrypt::{encrypt, encrypt_with_full_secrecy, decrypt, get_template};
 use miniscript::descriptor::{Descriptor, DescriptorPublicKey};
 use std::str::FromStr;
 
@@ -11,6 +11,17 @@ pub fn encrypt_descriptor(descriptor_string: &str) -> Result<String, JsValue> {
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     
     let encrypted = encrypt(desc)
+        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    
+    Ok(hex::encode(encrypted))
+}
+
+#[wasm_bindgen]
+pub fn encrypt_descriptor_with_full_secrecy(descriptor_string: &str) -> Result<String, JsValue> {
+    let desc = Descriptor::<DescriptorPublicKey>::from_str(descriptor_string)
+        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    
+    let encrypted = encrypt_with_full_secrecy(desc)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     
     Ok(hex::encode(encrypted))

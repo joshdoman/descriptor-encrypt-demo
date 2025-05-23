@@ -105,6 +105,31 @@ export function encrypt_descriptor(descriptor_string) {
 }
 
 /**
+ * @param {string} descriptor_string
+ * @returns {string}
+ */
+export function encrypt_descriptor_with_full_secrecy(descriptor_string) {
+    let deferred3_0;
+    let deferred3_1;
+    try {
+        const ptr0 = passStringToWasm0(descriptor_string, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.encrypt_descriptor_with_full_secrecy(ptr0, len0);
+        var ptr2 = ret[0];
+        var len2 = ret[1];
+        if (ret[3]) {
+            ptr2 = 0; len2 = 0;
+            throw takeFromExternrefTable0(ret[2]);
+        }
+        deferred3_0 = ptr2;
+        deferred3_1 = len2;
+        return getStringFromWasm0(ptr2, len2);
+    } finally {
+        wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
+    }
+}
+
+/**
  * @param {string} hex_data
  * @param {string} keys_string
  * @returns {string}

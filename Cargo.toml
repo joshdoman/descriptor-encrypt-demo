@@ -11,7 +11,7 @@ crate-type = ["cdylib", "rlib"]
 default = ["console_error_panic_hook"]
 
 [dependencies]
-descriptor-encrypt = { git = "https://github.com/joshdoman/descriptor-encrypt" }
+descriptor-encrypt = "0.1.1"
 wasm-bindgen = "0.2.84"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by

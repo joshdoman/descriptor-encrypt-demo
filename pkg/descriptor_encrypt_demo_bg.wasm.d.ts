@@ -2,6 +2,7 @@
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
 export const encrypt_descriptor: (a: number, b: number) => [number, number, number, number];
+export const encrypt_descriptor_with_full_secrecy: (a: number, b: number) => [number, number, number, number];
 export const decrypt_descriptor: (a: number, b: number, c: number, d: number) => [number, number, number, number];
 export const get_descriptor_template: (a: number, b: number) => [number, number, number, number];
 export const rustsecp256k1_v0_10_0_context_create: (a: number) => number;
