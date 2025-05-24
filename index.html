@@ -334,7 +334,7 @@
       decrypt_descriptor,
       get_descriptor_template,
       get_origin_derivation_paths
-    } from './pkg/descriptor_encrypt_demo.js';
+    } from `./pkg/descriptor_encrypt_demo.js?v=${Date.now()}`; // prevent caching
     
     async function run() {
       await init();
