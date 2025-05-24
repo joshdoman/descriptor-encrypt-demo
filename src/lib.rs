@@ -2,12 +2,14 @@ mod utils;
 
 use wasm_bindgen::prelude::*;
 use descriptor_encrypt::{encrypt, encrypt_with_full_secrecy, decrypt, get_template};
-use miniscript::descriptor::{Descriptor, DescriptorPublicKey};
+use bitcoin::secp256k1::Secp256k1;
+use miniscript::descriptor::{Descriptor, DescriptorPublicKey, DescriptorSecretKey};
 use std::str::FromStr;
 
 #[wasm_bindgen]
 pub fn encrypt_descriptor(descriptor: String) -> Result<String, JsValue> {
-    let desc = Descriptor::<DescriptorPublicKey>::from_str(&descriptor)
+    let secp = Secp256k1::new();
+    let (desc, _) = Descriptor::<DescriptorPublicKey>::parse_descriptor(&secp, &descriptor)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     
     let encrypted = encrypt(desc)
@@ -18,7 +20,8 @@ pub fn encrypt_descriptor(descriptor: String) -> Result<String, JsValue> {
 
 #[wasm_bindgen]
 pub fn encrypt_descriptor_with_full_secrecy(descriptor: String) -> Result<String, JsValue> {
-    let desc = Descriptor::<DescriptorPublicKey>::from_str(&descriptor)
+    let secp = Secp256k1::new();
+    let (desc, _) = Descriptor::<DescriptorPublicKey>::parse_descriptor(&secp, &descriptor)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     
     let encrypted = encrypt_with_full_secrecy(desc)
@@ -34,9 +37,16 @@ pub fn decrypt_descriptor(hex_data: String, keys: Vec<String>) -> Result<String,
     
     let mut decoded_keys = Vec::new();
     for key in keys {
-        if !key.trim().is_empty() {
-            let key = DescriptorPublicKey::from_str(key.trim())
-                .map_err(|e| JsValue::from_str(&e.to_string()))?;
+        let trimmed_key = key.trim();
+        if !trimmed_key.is_empty() {
+            let key = if let Ok(key) = DescriptorSecretKey::from_str(trimmed_key) {
+                let secp = Secp256k1::new();
+                key.to_public(&secp)
+                    .map_err(|e| JsValue::from_str(&e.to_string()))?
+            } else {
+                DescriptorPublicKey::from_str(trimmed_key)
+                    .map_err(|e| JsValue::from_str(&e.to_string()))?
+            };
             decoded_keys.push(key);
         }
     }
