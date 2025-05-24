@@ -328,13 +328,15 @@
   </script>
   
   <script type="module">
+    const version = '0.1.1';
+
     import init, {
       encrypt_descriptor,
       encrypt_descriptor_with_full_secrecy,
       decrypt_descriptor,
       get_descriptor_template,
       get_origin_derivation_paths
-    } from './pkg/descriptor_encrypt_demo.js';
+    } from `./pkg/descriptor_encrypt_demo.js?v=${version}`;
     
     async function run() {
       await init();
