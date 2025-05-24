@@ -315,8 +315,12 @@
       const encryptedInput = document.getElementById("encryptedInputDerivation").value;
       try {
         const paths = await window.wasm.get_origin_derivation_paths(encryptedInput.trim());
-        const uniquePaths = [...new Set(paths)];
-        document.getElementById("derivationResult").textContent = uniquePaths.join('\n');
+        if (paths.length > 0) {
+          const uniquePaths = [...new Set(paths)];
+          document.getElementById("derivationResult").textContent = uniquePaths.join('\n');
+        } else {
+          document.getElementById("derivationResult").textContent = "No derivation paths";
+        }
       } catch (e) {
         document.getElementById("derivationResult").textContent = "Error: " + e.toString();
       }
