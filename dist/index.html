@@ -86,6 +86,34 @@
       visibility: visible;
       opacity: 1;
     }
+    .key-input {
+      width: calc(100% - 60px);
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .key-input-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .remove-key-btn {
+      margin-left: 10px;
+      background-color: #ccc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 10px;
+      cursor: pointer;
+      align-self: flex-start;
+    }
+    #keys-container {
+      margin-bottom: 15px;
+    }
+    #add-key-btn {
+      margin-right: 8px;
+    }
   </style>
 <script defer src="bundle.js"></script></head>
 <body>
@@ -94,6 +122,8 @@
   <div class="tab">
     <button class="tablink active" onclick="openTab('encrypt')">Encrypt</button>
     <button class="tablink" onclick="openTab('decrypt')">Decrypt</button>
+    <button class="tablink" onclick="openTab('template')">Get Template</button>
+    <button class="tablink" onclick="openTab('derivation')">Get Derivation Paths</button>
   </div>
   
   <div id="encrypt" class="tabcontent visible">
@@ -125,17 +155,16 @@
   <div id="decrypt" class="tabcontent">
     <h2>Decrypt a Descriptor</h2>
     <label>Encrypted Descriptor (hex):</label>
-    <textarea id="encryptedInput" placeholder="Enter the encrypted hex data..."></textarea>
+    <textarea id="encryptedInputDecrypt" placeholder="Enter the encrypted hex data..."></textarea>
     
-    <h3>Template:</h3>
-    <div class="result-container">
-      <div id="templateResult" class="result"></div>
-      <button onclick="showTemplate()">Show Template</button>
-      <button onclick="copyToClipboard('templateResult')">Copy to Clipboard</button>
+    <h3>Decryption Keys:</h3>
+    <div id="keys-container">
+      <div class="key-input-container">
+        <input type="text" class="key-input" placeholder="Enter a public key or xpub...">
+        <button class="remove-key-btn" onclick="removeKeyInput(this)">✕</button>
+      </div>
     </div>
-    
-    <h3>Keys for Decryption:</h3>
-    <textarea id="keysInput" placeholder="Enter keys separated by commas..."></textarea>
+    <button id="add-key-btn" onclick="addKeyInput()">Add Key</button>
     <button onclick="decryptDescriptor()">Decrypt</button>
     
     <h3>Decrypted Result:</h3>
@@ -145,7 +174,36 @@
     </div>
   </div>
   
+  <div id="template" class="tabcontent">
+    <h2>Get Descriptor Template</h2>
+    <label>Encrypted Descriptor (hex):</label>
+    <textarea id="encryptedInputTemplate" placeholder="Enter the encrypted hex data..."></textarea>
+    
+    <button onclick="showTemplate()">Show Template</button>
+    
+    <h3>Template Result:</h3>
+    <div class="result-container">
+      <div id="templateResult" class="result"></div>
+      <button onclick="copyToClipboard('templateResult')">Copy to Clipboard</button>
+    </div>
+  </div>
+  
+  <div id="derivation" class="tabcontent">
+    <h2>Get Derivation Paths</h2>
+    <label>Encrypted Descriptor (hex):</label>
+    <textarea id="encryptedInputDerivation" placeholder="Enter the encrypted hex data..."></textarea>
+    
+    <button onclick="getDerivationPaths()">Get Derivation Paths</button>
+    
+    <h3>Unique Derivation Paths:</h3>
+    <div class="result-container">
+      <div id="derivationResult" class="result"></div>
+      <button onclick="copyToClipboard('derivationResult')">Copy to Clipboard</button>
+    </div>
+  </div>
+  
   <div class="footer">
+    <a style="margin-right: 16px;" href="https://github.com/joshdoman/descriptor-encrypt" target="_blank">How it works</a>
     <a href="https://github.com/joshdoman/descriptor-encrypt-demo" target="_blank">Source code</a>
   </div>
 
@@ -180,13 +238,45 @@
       event.currentTarget.classList.add("active");
     }
     
+    function addKeyInput() {
+      const container = document.getElementById('keys-container');
+      const div = document.createElement('div');
+      div.className = 'key-input-container';
+      div.innerHTML = `
+        <input type="text" class="key-input" placeholder="Enter a key...">
+        <button class="remove-key-btn" onclick="removeKeyInput(this)">✕</button>
+      `;
+      container.appendChild(div);
+    }
+    
+    function removeKeyInput(button) {
+      // Don't remove the last input
+      const container = document.getElementById('keys-container');
+      if (container.children.length > 1) {
+        button.parentElement.remove();
+      }
+    }
+    
+    function getKeyInputs() {
+      const inputs = document.querySelectorAll('.key-input');
+      const keys = [];
+      
+      inputs.forEach(input => {
+        const value = input.value.trim();
+        if (value) {
+          keys.push(value);
+        }
+      });
+      
+      return keys;
+    }
+    
     async function encryptDescriptor() {
       const input = document.getElementById("descriptorInput").value;
       const useFullSecrecy = document.getElementById("fullSecrecyToggle").checked;
       
       try {
         let result;
-        console.log(window.wasm);
         if (useFullSecrecy) {
           result = await window.wasm.encrypt_descriptor_with_full_secrecy(input.trim());
         } else {
@@ -199,7 +289,7 @@
     }
     
     async function showTemplate() {
-      const input = document.getElementById("encryptedInput").value;
+      const input = document.getElementById("encryptedInputTemplate").value;
       try {
         const result = await window.wasm.get_descriptor_template(input.trim());
         document.getElementById("templateResult").textContent = result;
@@ -209,13 +299,24 @@
     }
     
     async function decryptDescriptor() {
-      const encryptedInput = document.getElementById("encryptedInput").value;
-      const keysInput = document.getElementById("keysInput").value;
+      const encryptedInput = document.getElementById("encryptedInputDecrypt").value;
+      const keys = getKeyInputs();
       try {
-        const result = await window.wasm.decrypt_descriptor(encryptedInput.trim(), keysInput.trim());
+        const result = await window.wasm.decrypt_descriptor(encryptedInput.trim(), keys);
         document.getElementById("decryptResult").textContent = result;
       } catch (e) {
         document.getElementById("decryptResult").textContent = "Error: " + e.toString();
+      }
+    }
+    
+    async function getDerivationPaths() {
+      const encryptedInput = document.getElementById("encryptedInputDerivation").value;
+      try {
+        const paths = await window.wasm.get_origin_derivation_paths(encryptedInput.trim());
+        const uniquePaths = [...new Set(paths)];
+        document.getElementById("derivationResult").textContent = uniquePaths.join('\n');
+      } catch (e) {
+        document.getElementById("derivationResult").textContent = "Error: " + e.toString();
       }
     }
   </script>
@@ -225,18 +326,18 @@
       encrypt_descriptor,
       encrypt_descriptor_with_full_secrecy,
       decrypt_descriptor,
-      get_descriptor_template
+      get_descriptor_template,
+      get_origin_derivation_paths
     } from './pkg/descriptor_encrypt_demo.js';
     
     async function run() {
       await init();
-      console.log(encrypt_descriptor);
-      console.log(encrypt_descriptor_with_full_secrecy);
       window.wasm = {
         encrypt_descriptor,
         encrypt_descriptor_with_full_secrecy,
         decrypt_descriptor,
-        get_descriptor_template
+        get_descriptor_template,
+        get_origin_derivation_paths
       };
     }
     
