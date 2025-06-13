@@ -4,7 +4,7 @@
   "collaborators": [
     "Joshua Doman <joshsdoman@gmail.com>"
   ],
-  "version": "0.1.0",
+  "version": "0.1.2",
   "files": [
     "descriptor_encrypt_demo_bg.wasm",
     "descriptor_encrypt_demo.js",
